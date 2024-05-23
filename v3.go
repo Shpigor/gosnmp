@@ -10,7 +10,6 @@ package gosnmp
 
 import (
 	"bytes"
-	"encoding/binary"
 	"errors"
 	"fmt"
 	"runtime"
@@ -34,7 +33,8 @@ type SnmpV3SecurityModel uint8
 
 // UserSecurityModel is the only SnmpV3SecurityModel currently implemented.
 const (
-	UserSecurityModel SnmpV3SecurityModel = 3
+	UserSecurityModel      SnmpV3SecurityModel = 3
+	TransportSecurityModel SnmpV3SecurityModel = 4
 )
 
 //go:generate stringer -type=SnmpV3SecurityModel
@@ -65,8 +65,8 @@ type SnmpV3SecurityParameters interface {
 
 func (x *GoSNMP) validateParametersV3() error {
 	// update following code if you implement a new security model
-	if x.SecurityModel != UserSecurityModel {
-		return errors.New("the SNMPV3 User Security Model is the only SNMPV3 security model currently implemented")
+	if x.SecurityModel != UserSecurityModel && x.SecurityModel != TransportSecurityModel {
+		return errors.New("the SNMPV3 User and Trasnport Security Model are the only SNMPV3 security model currently implemented")
 	}
 	if x.SecurityParameters == nil {
 		return errors.New("SNMPV3 SecurityParameters must be set")
@@ -229,8 +229,8 @@ func (packet *SnmpPacket) marshalV3(buf *bytes.Buffer) (*bytes.Buffer, error) { 
 	if err != nil {
 		return emptyBuffer, err
 	}
-	packet.Logger.Printf("Marshal V3 SecurityParameters len=%d. Eaten Last 4 Bytes=%v",
-		len(securityParameters), securityParameters[len(securityParameters)-4:])
+	//packet.Logger.Printf("Marshal V3 SecurityParameters len=%d. Eaten Last 4 Bytes=%v",
+	//	len(securityParameters), securityParameters[len(securityParameters)-4:])
 
 	buf.Write([]byte{byte(OctetString)})
 	secParamLen, err := marshalLength(len(securityParameters))
@@ -253,8 +253,7 @@ func (packet *SnmpPacket) marshalV3Header() ([]byte, error) {
 	buf := new(bytes.Buffer)
 
 	// msg id
-	buf.Write([]byte{byte(Integer), 4})
-	err := binary.Write(buf, binary.BigEndian, packet.MsgID)
+	err := shrinkAndWriteUint(buf, int(packet.MsgID))
 	if err != nil {
 		return nil, err
 	}
@@ -408,7 +407,8 @@ func (x *GoSNMP) unmarshalV3Header(packet []byte,
 		return 0, errors.New("error parsing SNMPV3 message ID: truncted packet")
 	}
 
-	if SecModel, ok := rawSecModel.(int); ok {
+	SecModel, ok := rawSecModel.(int)
+	if ok {
 		response.SecurityModel = SnmpV3SecurityModel(SecModel)
 		x.Logger.Printf("Parsed security model %d", SecModel)
 	}
@@ -425,7 +425,11 @@ func (x *GoSNMP) unmarshalV3Header(packet []byte,
 		return 0, errors.New("error parsing SNMPV3 message ID: truncted packet")
 	}
 	if response.SecurityParameters == nil {
-		response.SecurityParameters = &UsmSecurityParameters{Logger: x.Logger}
+		if SnmpV3SecurityModel(SecModel) == UserSecurityModel {
+			response.SecurityParameters = &UsmSecurityParameters{Logger: x.Logger}
+		} else {
+			response.SecurityParameters = &TsmSecurityParameters{Logger: x.Logger}
+		}
 	}
 
 	cursor, err = response.SecurityParameters.unmarshal(response.MsgFlags, packet, cursor)
