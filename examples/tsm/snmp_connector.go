@@ -1,16 +1,18 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/pem"
 	"flag"
-	g "github.com/gosnmp/gosnmp"
+	g "github.com/Shpigor/gosnmp"
 	"github.com/rs/zerolog/log"
+	"io"
 	"net"
 	"os"
-	"sync"
-	"time"
+	"os/signal"
+	"syscall"
 )
 
 var waitTimeSeconds int
@@ -24,7 +26,7 @@ var certPool *x509.CertPool
 
 func init() {
 	var err error
-	flag.StringVar(&address, "h", "192.168.7.222:1620", "connection address to the HAProxy.")
+	flag.StringVar(&address, "h", "192.168.7.185:1620", "connection address to the HAProxy.")
 	flag.IntVar(&waitTimeSeconds, "w", 60, "waiting time in seconds before close connection")
 	flag.StringVar(&caCertPath, "ca", "examples/tsm/ca.pem", "path to ca certificate file.")
 	flag.StringVar(&certPath, "c", "examples/tsm/cert.pem", "path to certificate file.")
@@ -40,22 +42,16 @@ func init() {
 }
 
 func main() {
-	group := &sync.WaitGroup{}
-	group.Add(1)
+	mainCtx, mainCancel := context.WithCancel(context.Background())
+	listenSysSignal(mainCancel)
 	conn, err := openConnection()
 	if err != nil {
 		log.Error().Msgf("got error while connecting to tcp server: %+v", err)
 	} else {
-		go processConnection(group, conn)
-		if err != nil {
-			log.Error().Msgf("got error while creating snmp: %+v", err)
-			return
-		}
+		go processConnection(conn)
 		sendSnmpTrap(conn)
-		group.Wait()
 	}
-
-	<-time.After(time.Duration(waitTimeSeconds) * time.Second)
+	<-mainCtx.Done()
 }
 
 func openConnection() (net.Conn, error) {
@@ -91,7 +87,7 @@ func sendSnmpTrap(conn net.Conn) {
 	packet := g.SnmpPacket{
 		Version:       g.Version3,
 		PDUType:       g.SNMPv2Trap,
-		SecurityModel: 4,
+		SecurityModel: g.TransportSecurityModel,
 		//Variables:       []g.SnmpPDU{pduObject, pduMac, pduIp, pduData, pduData2, pduFirmware},
 		Variables:          []g.SnmpPDU{pduObject, pduMac},
 		MsgFlags:           g.AuthNoPriv | g.Reportable,
@@ -150,13 +146,35 @@ func parseCertFile(filename string) (*x509.Certificate, error) {
 	return cert, nil
 }
 
-func processConnection(group *sync.WaitGroup, conn net.Conn) {
+func processConnection(conn net.Conn) {
 	buffer := make([]byte, 65535)
-	err := conn.SetReadDeadline(time.Now().Add(time.Duration(3) * time.Second))
-	if err != nil {
-		log.Error().Msgf("got error while setting read timeout: %+v", err)
+	for {
+		n, err := conn.Read(buffer)
+		if err != nil && err == io.EOF {
+			log.Error().Msgf("got error while reading data: %+v", err)
+			return
+		}
+		log.Info().Msgf("received data: %s", string(buffer[:n]))
 	}
-	conn.Read(buffer)
-	<-time.After(time.Duration(waitTimeSeconds) * time.Second)
-	group.Done()
+}
+
+func listenSysSignal(cancel context.CancelFunc) {
+	signalChannel := make(chan os.Signal, 1)
+	signal.Notify(signalChannel)
+	go func() {
+		for {
+			sig := <-signalChannel
+			if sig == syscall.SIGTERM {
+				log.Info().Msg("Got kill signal. ")
+				log.Info().Msg("Program will terminate now.")
+				cancel()
+			} else if sig == syscall.SIGINT {
+				log.Info().Msg("Got CTRL+C signal")
+				log.Info().Msg("Closing.")
+				cancel()
+			} else {
+				log.Trace().Msgf("Ignoring signal: %d", sig)
+			}
+		}
+	}()
 }

@@ -15,11 +15,11 @@ import (
 	"testing"
 	"time"
 
+	g "github.com/Shpigor/gosnmp"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcapgo"
-	"github.com/gosnmp/gosnmp"
 )
 
 var (
@@ -51,83 +51,83 @@ func TestPDU(t *testing.T) {
 		}
 	}
 
-	tstpdus := []gosnmp.SnmpPDU{
+	tstpdus := []g.SnmpPDU{
 		{
 			Name:  ".1.3.6.1.2.1.1.7.0",
-			Type:  gosnmp.Integer,
+			Type:  g.Integer,
 			Value: 104,
 		},
 		{
 			Name:  ".1.3.6.1.2.1.2.2.1.10.1",
-			Type:  gosnmp.Counter32,
+			Type:  g.Counter32,
 			Value: uint32(271070065),
 		},
 		{
 			Name:  ".1.3.6.1.2.1.2.2.1.5.1",
-			Type:  gosnmp.Gauge32,
+			Type:  g.Gauge32,
 			Value: uint32(math.MaxUint32),
 		},
 		{
 			Name:  ".1.3.6.1.2.1.1.4.0",
-			Type:  gosnmp.OctetString,
+			Type:  g.OctetString,
 			Value: []byte("Administrator"),
 		},
 		{
 			Name:  ".1.3.6.1.2.1.4.21.1.1.127.0.0.1",
-			Type:  gosnmp.IPAddress,
+			Type:  g.IPAddress,
 			Value: "127.0.0.1",
 		},
 		{
 			Name:  ".1.3.6.1.4.1.6574.4.2.12.1.0",
-			Type:  gosnmp.OpaqueFloat,
+			Type:  g.OpaqueFloat,
 			Value: float32(10.0),
 		},
 		{
 			Name:  ".1.3.6.1.4.1.6574.4.2.12.1.1",
-			Type:  gosnmp.OpaqueFloat,
+			Type:  g.OpaqueFloat,
 			Value: float32(0.0),
 		},
 		{
 			Name:  ".1.3.6.1.4.1.6574.4.2.12.2.0",
-			Type:  gosnmp.OpaqueDouble,
+			Type:  g.OpaqueDouble,
 			Value: float64(10.0),
 		},
 		{
 			Name:  ".1.3.6.1.4.1.6574.4.2.12.2.1",
-			Type:  gosnmp.OpaqueDouble,
+			Type:  g.OpaqueDouble,
 			Value: float64(0.0),
 		},
 		{
 			Name:  ".1.3.6.1.2.1.2.2.1.10.1",
-			Type:  gosnmp.Counter32,
+			Type:  g.Counter32,
 			Value: uint32(271070065),
 		},
 		{
 			Name:  ".1.3.6.1.2.1.1.3.0",
-			Type:  gosnmp.TimeTicks,
+			Type:  g.TimeTicks,
 			Value: uint32(318870100),
 		},
 		{
 			Name:  ".1.3.6.1.2.1.1.3.1",
-			Type:  gosnmp.Uinteger32,
+			Type:  g.Uinteger32,
 			Value: uint32(math.MaxInt32),
 		},
 		{
 			Name:  ".1.3.6.1.2.1.1.3.2",
-			Type:  gosnmp.Counter64,
+			Type:  g.Counter64,
 			Value: uint64(math.MaxInt64),
 		},
 	}
-	sess := gosnmp.Default
-	sess.Version = gosnmp.Version2c
+	sess := g.Default
+	sess.Version = g.Version2c
 
 	for i, tstpdu := range tstpdus {
 		tname := fmt.Sprintf("test%d_PDU%s", i, tstpdu.Type.String())
 		t.Run(tname, func(t *testing.T) {
 			fname := filepath.Join(recdir, tname+"_pkt.b64")
 
-			pdus := []gosnmp.SnmpPDU{tstpdu}
-			pkt := sess.MkSnmpPacket(gosnmp.SetRequest, pdus, 0, 0)
+			pdus := []g.SnmpPDU{tstpdu}
+			pkt := sess.MkSnmpPacket(g.SetRequest, pdus, 0, 0)
 			pkt.RequestID++
 
 			exp, err := netSnmpPduPkt(fname, pdus[0], sess, pkt.RequestID, testing.Verbose())

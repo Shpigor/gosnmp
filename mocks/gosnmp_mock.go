@@ -8,8 +8,8 @@ import (
 	reflect "reflect"
 	time "time"
 
+	g "github.com/Shpigor/gosnmp"
 	gomock "github.com/golang/mock/gomock"
-	gosnmp "github.com/gosnmp/gosnmp"
 )
 
 // MockHandler is a mock of Handler interface.
@@ -36,7 +36,7 @@ func (m *MockHandler) EXPECT() *MockHandlerMockRecorder {
 }
 
 // BulkWalk mocks base method.
-func (m *MockHandler) BulkWalk(rootOid string, walkFn gosnmp.WalkFunc) error {
+func (m *MockHandler) BulkWalk(rootOid string, walkFn g.WalkFunc) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BulkWalk", rootOid, walkFn)
 	ret0, _ := ret[0].(error)
@@ -50,10 +50,10 @@ func (mr *MockHandlerMockRecorder) BulkWalk(rootOid, walkFn interface{}) *gomock
 }
 
 // BulkWalkAll mocks base method.
-func (m *MockHandler) BulkWalkAll(rootOid string) ([]gosnmp.SnmpPDU, error) {
+func (m *MockHandler) BulkWalkAll(rootOid string) ([]g.SnmpPDU, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BulkWalkAll", rootOid)
-	ret0, _ := ret[0].([]gosnmp.SnmpPDU)
+	ret0, _ := ret[0].([]g.SnmpPDU)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -175,10 +175,10 @@ func (mr *MockHandlerMockRecorder) ContextName() *gomock.Call {
 }
 
 // Get mocks base method.
-func (m *MockHandler) Get(oids []string) (*gosnmp.SnmpPacket, error) {
+func (m *MockHandler) Get(oids []string) (*g.SnmpPacket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", oids)
-	ret0, _ := ret[0].(*gosnmp.SnmpPacket)
+	ret0, _ := ret[0].(*g.SnmpPacket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -190,10 +190,10 @@ func (mr *MockHandlerMockRecorder) Get(oids interface{}) *gomock.Call {
 }
 
 // GetBulk mocks base method.
-func (m *MockHandler) GetBulk(oids []string, nonRepeaters uint8, maxRepetitions uint32) (*gosnmp.SnmpPacket, error) {
+func (m *MockHandler) GetBulk(oids []string, nonRepeaters uint8, maxRepetitions uint32) (*g.SnmpPacket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBulk", oids, nonRepeaters, maxRepetitions)
-	ret0, _ := ret[0].(*gosnmp.SnmpPacket)
+	ret0, _ := ret[0].(*g.SnmpPacket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -219,10 +219,10 @@ func (mr *MockHandlerMockRecorder) GetExponentialTimeout() *gomock.Call {
 }
 
 // GetNext mocks base method.
-func (m *MockHandler) GetNext(oids []string) (*gosnmp.SnmpPacket, error) {
+func (m *MockHandler) GetNext(oids []string) (*g.SnmpPacket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetNext", oids)
-	ret0, _ := ret[0].(*gosnmp.SnmpPacket)
+	ret0, _ := ret[0].(*g.SnmpPacket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -234,10 +234,10 @@ func (mr *MockHandlerMockRecorder) GetNext(oids interface{}) *gomock.Call {
 }
 
 // Logger mocks base method.
-func (m *MockHandler) Logger() gosnmp.Logger {
+func (m *MockHandler) Logger() g.Logger {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Logger")
-	ret0, _ := ret[0].(gosnmp.Logger)
+	ret0, _ := ret[0].(g.Logger)
 	return ret0
 }
 
@@ -276,10 +276,10 @@ func (mr *MockHandlerMockRecorder) MaxRepetitions() *gomock.Call {
 }
 
 // MsgFlags mocks base method.
-func (m *MockHandler) MsgFlags() gosnmp.SnmpV3MsgFlags {
+func (m *MockHandler) MsgFlags() g.SnmpV3MsgFlags {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MsgFlags")
-	ret0, _ := ret[0].(gosnmp.SnmpV3MsgFlags)
+	ret0, _ := ret[0].(g.SnmpV3MsgFlags)
 	return ret0
 }
 
@@ -332,10 +332,10 @@ func (mr *MockHandlerMockRecorder) Retries() *gomock.Call {
 }
 
 // SecurityModel mocks base method.
-func (m *MockHandler) SecurityModel() gosnmp.SnmpV3SecurityModel {
+func (m *MockHandler) SecurityModel() g.SnmpV3SecurityModel {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SecurityModel")
-	ret0, _ := ret[0].(gosnmp.SnmpV3SecurityModel)
+	ret0, _ := ret[0].(g.SnmpV3SecurityModel)
 	return ret0
 }
 
@@ -346,10 +346,10 @@ func (mr *MockHandlerMockRecorder) SecurityModel() *gomock.Call {
 }
 
 // SecurityParameters mocks base method.
-func (m *MockHandler) SecurityParameters() gosnmp.SnmpV3SecurityParameters {
+func (m *MockHandler) SecurityParameters() g.SnmpV3SecurityParameters {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SecurityParameters")
-	ret0, _ := ret[0].(gosnmp.SnmpV3SecurityParameters)
+	ret0, _ := ret[0].(g.SnmpV3SecurityParameters)
 	return ret0
 }
 
@@ -360,10 +360,10 @@ func (mr *MockHandlerMockRecorder) SecurityParameters() *gomock.Call {
 }
 
 // SendTrap mocks base method.
-func (m *MockHandler) SendTrap(trap gosnmp.SnmpTrap) (*gosnmp.SnmpPacket, error) {
+func (m *MockHandler) SendTrap(trap g.SnmpTrap) (*g.SnmpPacket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendTrap", trap)
-	ret0, _ := ret[0].(*gosnmp.SnmpPacket)
+	ret0, _ := ret[0].(*g.SnmpPacket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -375,10 +375,10 @@ func (mr *MockHandlerMockRecorder) SendTrap(trap interface{}) *gomock.Call {
 }
 
 // Set mocks base method.
-func (m *MockHandler) Set(pdus []gosnmp.SnmpPDU) (*gosnmp.SnmpPacket, error) {
+func (m *MockHandler) Set(pdus []g.SnmpPDU) (*g.SnmpPacket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Set", pdus)
-	ret0, _ := ret[0].(*gosnmp.SnmpPacket)
+	ret0, _ := ret[0].(*g.SnmpPacket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -438,7 +438,7 @@ func (mr *MockHandlerMockRecorder) SetExponentialTimeout(value interface{}) *gom
 }
 
 // SetLogger mocks base method.
-func (m *MockHandler) SetLogger(logger gosnmp.Logger) {
+func (m *MockHandler) SetLogger(logger g.Logger) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetLogger", logger)
 }
@@ -474,7 +474,7 @@ func (mr *MockHandlerMockRecorder) SetMaxRepetitions(maxRepetitions interface{})
 }
 
 // SetMsgFlags mocks base method.
-func (m *MockHandler) SetMsgFlags(msgFlags gosnmp.SnmpV3MsgFlags) {
+func (m *MockHandler) SetMsgFlags(msgFlags g.SnmpV3MsgFlags) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetMsgFlags", msgFlags)
 }
@@ -522,7 +522,7 @@ func (mr *MockHandlerMockRecorder) SetRetries(retries interface{}) *gomock.Call 
 }
 
 // SetSecurityModel mocks base method.
-func (m *MockHandler) SetSecurityModel(securityModel gosnmp.SnmpV3SecurityModel) {
+func (m *MockHandler) SetSecurityModel(securityModel g.SnmpV3SecurityModel) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetSecurityModel", securityModel)
 }
@@ -534,7 +534,7 @@ func (mr *MockHandlerMockRecorder) SetSecurityModel(securityModel interface{}) *
 }
 
 // SetSecurityParameters mocks base method.
-func (m *MockHandler) SetSecurityParameters(securityParameters gosnmp.SnmpV3SecurityParameters) {
+func (m *MockHandler) SetSecurityParameters(securityParameters g.SnmpV3SecurityParameters) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetSecurityParameters", securityParameters)
 }
@@ -570,7 +570,7 @@ func (mr *MockHandlerMockRecorder) SetTimeout(timeout interface{}) *gomock.Call 
 }
 
 // SetVersion mocks base method.
-func (m *MockHandler) SetVersion(version gosnmp.SnmpVersion) {
+func (m *MockHandler) SetVersion(version g.SnmpVersion) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetVersion", version)
 }
@@ -610,10 +610,10 @@ func (mr *MockHandlerMockRecorder) Timeout() *gomock.Call {
 }
 
 // UnmarshalTrap mocks base method.
-func (m *MockHandler) UnmarshalTrap(trap []byte, useResponseSecurityParameters bool) (*gosnmp.SnmpPacket, error) {
+func (m *MockHandler) UnmarshalTrap(trap []byte, useResponseSecurityParameters bool) (*g.SnmpPacket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UnmarshalTrap", trap, useResponseSecurityParameters)
-	ret0, _ := ret[0].(*gosnmp.SnmpPacket)
+	ret0, _ := ret[0].(*g.SnmpPacket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -625,10 +625,10 @@ func (mr *MockHandlerMockRecorder) UnmarshalTrap(trap, useResponseSecurityParame
 }
 
 // Version mocks base method.
-func (m *MockHandler) Version() gosnmp.SnmpVersion {
+func (m *MockHandler) Version() g.SnmpVersion {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Version")
-	ret0, _ := ret[0].(gosnmp.SnmpVersion)
+	ret0, _ := ret[0].(g.SnmpVersion)
 	return ret0
 }
 
@@ -639,7 +639,7 @@ func (mr *MockHandlerMockRecorder) Version() *gomock.Call {
 }
 
 // Walk mocks base method.
-func (m *MockHandler) Walk(rootOid string, walkFn gosnmp.WalkFunc) error {
+func (m *MockHandler) Walk(rootOid string, walkFn g.WalkFunc) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Walk", rootOid, walkFn)
 	ret0, _ := ret[0].(error)
@@ -653,10 +653,10 @@ func (mr *MockHandlerMockRecorder) Walk(rootOid, walkFn interface{}) *gomock.Cal
 }
 
 // WalkAll mocks base method.
-func (m *MockHandler) WalkAll(rootOid string) ([]gosnmp.SnmpPDU, error) {
+func (m *MockHandler) WalkAll(rootOid string) ([]g.SnmpPDU, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WalkAll", rootOid)
-	ret0, _ := ret[0].([]gosnmp.SnmpPDU)
+	ret0, _ := ret[0].([]g.SnmpPDU)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

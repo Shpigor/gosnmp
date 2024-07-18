@@ -13,14 +13,14 @@ import (
 	"io"
 	"os"
 
-	"github.com/gosnmp/gosnmp"
+	g "github.com/Shpigor/gosnmp"
 )
 
 func isPlayback() bool {
 	return true
 }
 
-func netSnmpPduPkt(fname string, _ gosnmp.SnmpPDU, _ *gosnmp.GoSNMP, _ uint32, _ bool) ([]byte, error) {
+func netSnmpPduPkt(fname string, _ g.SnmpPDU, _ *g.GoSNMP, _ uint32, _ bool) ([]byte, error) {
 	f, err := os.Open(fname)
 	if err != nil {
 		if os.IsNotExist(err) {
