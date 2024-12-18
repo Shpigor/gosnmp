@@ -6,7 +6,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"flag"
-	g "github.com/Shpigor/gosnmp"
+	g "github.com/gosnmp/gosnmp"
 	"github.com/rs/zerolog/log"
 	"io"
 	"net"
@@ -91,7 +91,7 @@ func sendSnmpTrap(conn net.Conn) {
 		//Variables:       []g.SnmpPDU{pduObject, pduMac, pduIp, pduData, pduData2, pduFirmware},
 		Variables:          []g.SnmpPDU{pduObject, pduMac},
 		MsgFlags:           g.AuthNoPriv | g.Reportable,
-		ContextEngineID:    "8000185803000bc216b040",
+		ContextEngineID:    "8000185803000bc21713e2",
 		MsgID:              1,
 		RequestID:          1,
 		Error:              0,

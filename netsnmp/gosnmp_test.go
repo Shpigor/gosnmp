@@ -15,11 +15,11 @@ import (
 	"testing"
 	"time"
 
-	g "github.com/Shpigor/gosnmp"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcapgo"
+	g "github.com/gosnmp/gosnmp"
 )
 
 var (

@@ -10,7 +10,7 @@ import (
 	"log"
 	"os"
 
-	g "github.com/Shpigor/gosnmp"
+	g "github.com/gosnmp/gosnmp"
 )
 
 func main() {

@@ -6,7 +6,7 @@ package main
 
 import (
 	"fmt"
-	g "github.com/Shpigor/gosnmp"
+	g "github.com/gosnmp/gosnmp"
 	"log"
 	"strconv"
 	"strings"
