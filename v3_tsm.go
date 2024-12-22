@@ -110,21 +110,6 @@ func (sp *TsmSecurityParameters) marshal(flags SnmpV3MsgFlags) ([]byte, error) {
 }
 
 func (sp *TsmSecurityParameters) unmarshal(flags SnmpV3MsgFlags, packet []byte, cursor int) (int, error) {
-	//if cursor >= len(packet) {
-	//	return 0, errors.New("error parsing SNMPV3 Transport Security Model parameters: end of packet")
-	//}
-	//
-	//if PDUType(packet[cursor]) != Sequence {
-	//	return 0, errors.New("error parsing SNMPV3 Transport Security Model parameters")
-	//}
-	//_, cursorTmp, err := parseLength(packet[cursor:])
-	//if err != nil {
-	//	return 0, err
-	//}
-	//cursor += cursorTmp
-	//if cursorTmp > len(packet) {
-	//	return 0, errors.New("error parsing SNMPV3 Transport Security Model parameters: truncated packet")
-	//}
 	return cursor, nil
 }
 
